@@ -3,7 +3,7 @@ import axios, { AxiosResponse } from 'axios'
 const API_URL = process.env.REACT_APP_API_URL as string
 
 interface DtoResponse {
-  error  : boolean
+  error: boolean
   message: string
 }
 
@@ -12,7 +12,7 @@ interface Headers {
 }
 
 interface UseAxiosProps<T> {
-  body   : T
+  body: T
   headers: Headers
 }
 
@@ -31,7 +31,9 @@ const callApi = async <T>({ body, headers }: UseAxiosProps<T>) => {
     console.error(e)
     return {
       response: null,
-      error: (e.response?.data?.message as string) || 'Something went wrong'
+      error:
+        (e.response?.data?.message as string) ||
+        'Something went wrong, please contact with anthony.luzquinos@gmail.com'
     }
   }
 }
