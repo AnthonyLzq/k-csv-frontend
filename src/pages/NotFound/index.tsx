@@ -16,11 +16,15 @@ const NotFound: FC = () => (
       }}
     >
       <h2 style={{ color: '#d5d5d5' }}>We lost this page</h2>
-      <p style={{
-        color    : '#d5d5d5',
-        marginTop: 0
-      }}>
-        We searched high and low, but couldn't find what you're looking for.<br />Let's find a better place four you to go:
+      <p
+        style={{
+          color    : '#d5d5d5',
+          marginTop: 0
+        }}
+      >
+        We searched high and low, but couldn't find what you're looking for.
+        <br />
+        Let's find a better place four you to go:
       </p>
       <Link to='/' style={{ textDecoration: 'none' }}>
         <Button

@@ -6,9 +6,9 @@ const Loader: FC = () => {
   return (
     <section
       style={{
-        display: 'flex',
+        display       : 'flex',
         justifyContent: 'center',
-        marginTop: 15,
+        marginTop     : 15
       }}
     >
       <div className='lds-roller'>

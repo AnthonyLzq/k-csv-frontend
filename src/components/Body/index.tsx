@@ -1,11 +1,17 @@
 import { FC, MouseEvent, useState } from 'react'
 import {
   Button,
+  Fab,
   IconButton,
   InputAdornment,
   InputBase
 } from '@material-ui/core'
-import { CloudUpload, Visibility, VisibilityOff } from '@material-ui/icons'
+import {
+  CloudUpload,
+  Home,
+  Visibility,
+  VisibilityOff
+} from '@material-ui/icons'
 import { createTheme, MuiThemeProvider } from '@material-ui/core/styles'
 import { DropzoneArea } from 'material-ui-dropzone'
 import Swal from 'sweetalert2'
@@ -24,7 +30,8 @@ const theme = createTheme({
         minHeight: 50,
         marginLeft: 'auto',
         marginRight: 'auto',
-        width: '50vw'
+        maxWidth: '90vw',
+        minWidth: '50vw'
       },
       icon: {
         color: '#d5d5d5'
@@ -54,7 +61,11 @@ const theme = createTheme({
   }
 })
 
-const Body: FC = () => {
+interface BodyProps {
+  setIsUploadSelected: (value: boolean) => void
+}
+
+const Body: FC<BodyProps> = ({ setIsUploadSelected }) => {
   const [file, setFile] = useState<File | null>(null)
   const [apiKey, setApiKey] = useState('')
   const [showApiKey, setShowApiKey] = useState(false)
@@ -73,15 +84,15 @@ const Body: FC = () => {
     if (!file)
       return Swal.fire({
         background: '#d5d5d5',
-        icon: 'error',
-        title: 'Missing csv!'
+        icon      : 'error',
+        title     : 'Missing csv!'
       })
 
     if (!apiKey)
       return Swal.fire({
         background: '#d5d5d5',
-        icon: 'error',
-        title: 'Missing apiKey!'
+        icon      : 'error',
+        title     : 'Missing apiKey!'
       })
 
     setIsLoading(true)
@@ -98,23 +109,24 @@ const Body: FC = () => {
     if (error)
       Swal.fire({
         background: '#d5d5d5',
-        icon: 'error',
-        title: error
+        icon      : 'error',
+        text      : error,
+        title     : 'Error!'
       })
     else
       Swal.fire({
-        background: '#d5d5d5',
+        background        : '#d5d5d5',
         confirmButtonColor: '#5e7ce2',
-        icon: 'success',
-        iconColor: '#5e7ce2',
-        text: response as string,
-        title: 'Success!'
+        icon              : 'success',
+        iconColor         : '#5e7ce2',
+        text              : response as string,
+        title             : 'Success!'
       })
   }
 
   return (
     <>
-      <section className="section" >
+      <section className='section'>
         <form>
           <MuiThemeProvider theme={theme}>
             <DropzoneArea
@@ -137,12 +149,12 @@ const Body: FC = () => {
             <label htmlFor='apiKey'>apiKey: </label>
             <InputBase
               style={{
-                background: '#87898c',
-                color: '#282c34',
-                borderColor: 'transparent',
+                background  : '#87898c',
+                color       : '#282c34',
+                borderColor : 'transparent',
                 borderRadius: '0.25rem',
-                marginLeft: '1rem',
-                padding: '0.25rem 0.5rem 0rem'
+                margin      : 'auto 1rem',
+                padding     : '0.25rem 0.5rem 0rem'
               }}
               required
               type={showApiKey ? 'text' : 'password'}
@@ -176,7 +188,7 @@ const Body: FC = () => {
             size='large'
             style={{
               backgroundColor: '#5e7ce2',
-              marginTop: '1rem'
+              marginTop      : '1rem'
             }}
           >
             Update csv
@@ -184,6 +196,19 @@ const Body: FC = () => {
         </form>
       </section>
       {isLoading && <Loader />}
+      <Fab
+        size='small'
+        aria-label='home'
+        style={{
+          backgroundColor: '#5e7ce2',
+          position       : 'fixed',
+          margin         : 0,
+          inset          : 'auto 20px 20px auto'
+        }}
+        onClick={() => setIsUploadSelected(false)}
+      >
+        <Home />
+      </Fab>
     </>
   )
 }
