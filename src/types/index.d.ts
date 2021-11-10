@@ -28,14 +28,3 @@ type OverridesNameToClassKey = {
 declare module '@material-ui/core/styles/overrides' {
   export interface ComponentNameToClassKey extends OverridesNameToClassKey {}
 }
-
-declare module '@material-ui/core/styles/createBreakpoints' {
-  interface BreakpointOverrides {
-    xs: true
-    sm: true
-    md: true
-    lg: true
-    xl: true
-    xxl: true
-  }
-}
