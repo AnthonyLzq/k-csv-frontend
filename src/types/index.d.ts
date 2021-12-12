@@ -25,6 +25,10 @@ type OverridesNameToClassKey = {
   >
 }
 
+declare global {
+  type Option = 'download' | 'upload' | null
+}
+
 declare module '@material-ui/core/styles/overrides' {
   export interface ComponentNameToClassKey extends OverridesNameToClassKey {}
 }

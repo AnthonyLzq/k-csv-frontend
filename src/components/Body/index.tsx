@@ -7,6 +7,7 @@ import {
   InputBase
 } from '@material-ui/core'
 import {
+  CloudDownload,
   CloudUpload,
   Home,
   Visibility,
@@ -18,7 +19,7 @@ import Swal from 'sweetalert2'
 
 import './index.css'
 import { Loader } from '../Loader'
-import { callApi } from '../../utils'
+import { downloadCsv, uploadCsv, SEPARATOR } from '../../utils'
 
 const theme = createTheme({
   overrides: {
@@ -62,10 +63,13 @@ const theme = createTheme({
 })
 
 interface BodyProps {
-  setIsUploadSelected: (value: boolean) => void
+  option: Option
+  setOption: (value: Option) => void
 }
 
-const Body: FC<BodyProps> = ({ setIsUploadSelected }) => {
+const Body: FC<BodyProps> = props => {
+  const { option, setOption } = props
+  const upload = option === 'upload'
   const [file, setFile] = useState<File | null>(null)
   const [apiKey, setApiKey] = useState('')
   const [showApiKey, setShowApiKey] = useState(false)
@@ -76,7 +80,7 @@ const Body: FC<BodyProps> = ({ setIsUploadSelected }) => {
     else setFile(files[0])
   }
 
-  const handleSubmit = async (
+  const handleSubmitForUpload = async (
     e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
   ) => {
     e.preventDefault()
@@ -97,8 +101,8 @@ const Body: FC<BodyProps> = ({ setIsUploadSelected }) => {
 
     setIsLoading(true)
     const body = new FormData()
-    body.append('file', file as File)
-    const { response, error } = await callApi({
+    body.append('file', file)
+    const { response, error } = await uploadCsv({
       body,
       headers: {
         'api-key': apiKey
@@ -124,27 +128,67 @@ const Body: FC<BodyProps> = ({ setIsUploadSelected }) => {
       })
   }
 
+  const handleSubmitForDownload = async (
+    e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
+  ) => {
+    e.preventDefault()
+
+    if (!apiKey)
+      return Swal.fire({
+        background: '#d5d5d5',
+        icon      : 'error',
+        title     : 'Missing apiKey!'
+      })
+
+    setIsLoading(true)
+    const { response, error } = await downloadCsv({
+      body: null,
+      headers: {
+        'api-key': apiKey
+      }
+    })
+
+    if (response) {
+      const [data, fileName] = response.split(SEPARATOR)
+      const downloadLink = document.createElement('a')
+      downloadLink.href = `data:text/csv;charset=utf-8,${data}`
+      downloadLink.download = fileName
+      downloadLink.click()
+    }
+    setIsLoading(false)
+
+    if (error)
+      Swal.fire({
+        background: '#d5d5d5',
+        icon      : 'error',
+        text      : error,
+        title     : 'Error!'
+      })
+  }
+
   return (
     <>
       <section className='section'>
         <form>
-          <MuiThemeProvider theme={theme}>
-            <DropzoneArea
-              showPreviewsInDropzone={true}
-              useChipsForPreview
-              acceptedFiles={['.csv', 'text/csv']}
-              dropzoneText='Drag and drop your csv here or click'
-              filesLimit={1}
-              maxFileSize={500_000_000}
-              onChange={onChange}
-              dropzoneProps={{
-                disabled: isLoading
-              }}
-              previewChipProps={{
-                disabled: isLoading
-              }}
-            />
-          </MuiThemeProvider>
+          {upload && (
+            <MuiThemeProvider theme={theme}>
+              <DropzoneArea
+                showPreviewsInDropzone={true}
+                useChipsForPreview
+                acceptedFiles={['.csv', 'text/csv']}
+                dropzoneText='Drag and drop your csv here or click'
+                filesLimit={1}
+                maxFileSize={500_000_000}
+                onChange={onChange}
+                dropzoneProps={{
+                  disabled: isLoading
+                }}
+                previewChipProps={{
+                  disabled: isLoading
+                }}
+              />
+            </MuiThemeProvider>
+          )}
           <div className='form-control'>
             <label htmlFor='apiKey'>apiKey: </label>
             <InputBase
@@ -180,18 +224,18 @@ const Body: FC<BodyProps> = ({ setIsUploadSelected }) => {
             />
           </div>
           <Button
-            startIcon={<CloudUpload />}
+            startIcon={upload ? <CloudUpload /> : <CloudDownload />}
             type='submit'
-            onClick={handleSubmit}
+            onClick={upload ? handleSubmitForUpload : handleSubmitForDownload}
             disabled={isLoading}
             variant='contained'
             size='large'
             style={{
               backgroundColor: '#5e7ce2',
-              marginTop      : '1rem'
+              marginTop: '1rem'
             }}
           >
-            Update csv
+            {upload ? 'Update csv' : 'Download csv'}
           </Button>
         </form>
       </section>
@@ -205,7 +249,7 @@ const Body: FC<BodyProps> = ({ setIsUploadSelected }) => {
           margin         : 0,
           inset          : 'auto 20px 20px auto'
         }}
-        onClick={() => setIsUploadSelected(false)}
+        onClick={() => setOption(null)}
       >
         <Home />
       </Fab>
