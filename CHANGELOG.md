@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/AnthonyLzq/k-csv-frontend/compare/v1.2.0...v1.3.0) (2021-12-12)
+
+
+### Features
+
+* implemented download button ([a0d01d1](https://github.com/AnthonyLzq/k-csv-frontend/commit/a0d01d156d091b8293d3cb113877d6b7d9bd661b))
+
 ## [1.2.0](https://github.com/AnthonyLzq/k-csv-frontend/compare/v1.1.0...v1.2.0) (2021-11-10)
 
 
